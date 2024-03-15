@@ -1,0 +1,28 @@
+﻿@using SibSIU.Identity.Infrastructure
+@using SibSIU.Identity.TempDataModel
+<div aria-live="polite" aria-atomic="true" class="position-relative bd-example-toasts rounded-3">
+    <div class="toast-container top-0 end-0 p-3" id="toastPlacement">
+        @if (TempData.Get<ToastMessage>(TempDataExtensions.BaseKey) is ToastMessage message)
+        {
+            <div id="message_toast" class="toast align-items-center @message.Class border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <p class="text-body-white fs-5 fw-semibold">@message.Message</p>                        
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    var element = document.getElementById("message_toast");
+                    var toast = new bootstrap.Toast(element, {
+                        delay: 10000,
+                        autohide: true
+                    });
+                    toast.show();
+                });
+            </script>
+        }
+    </div>
+</div>

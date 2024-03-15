@@ -1,0 +1,56 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <InvariantGlobalization>false</InvariantGlobalization>
+    <UserSecretsId>801b80b2-dcab-4a07-9956-1022d8b65407</UserSecretsId>
+    <PreserveCompilationContext>true</PreserveCompilationContext>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Remove="compilerconfig.json" />
+    <Content Remove="wwwroot\lib\bootstrap\bootstrap.custom.scss" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\bootstrap.custom.scss" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="compilerconfig.json" />
+    <None Include="wwwroot\lib\bootstrap\bootstrap.custom.scss" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SibSIU.Auth.Database\SibSIU.Auth.Database.csproj" />
+    <ProjectReference Include="..\SibSIU.CORS.Database\SibSIU.CORS.Database.csproj" />
+    <ProjectReference Include="..\SibSIU.Dean.Database\SibSIU.Dean.Database.csproj" />
+    <ProjectReference Include="..\SibSIU.Domain.Dean\SibSIU.Domain.Dean.csproj" />
+    <ProjectReference Include="..\SibSIU.Domain.ExternalApplication\SibSIU.Domain.ExternalApplication.csproj" />
+    <ProjectReference Include="..\SibSIU.Domain.Mail\SibSIU.Domain.SendMail.csproj" />
+    <ProjectReference Include="..\SibSIU.Domain.User\SibSIU.Domain.UserManager.csproj" />
+    <ProjectReference Include="..\SibSIU.Identity.Database\SibSIU.Identity.Database.csproj" />
+    <ProjectReference Include="..\SibSIU.Identity.Models\SibSIU.Identity.Models.csproj" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.*-*" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
+    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.2" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="wwwroot\EmailTemplates\Registration.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+</Project>

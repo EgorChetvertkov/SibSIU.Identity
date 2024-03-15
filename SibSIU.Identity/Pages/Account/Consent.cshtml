@@ -1,0 +1,26 @@
+﻿@page
+@using Microsoft.Extensions.Primitives
+@model SibSIU.Identity.Pages.Account.ConsentModel
+@{
+    Layout = "_AuthLayout";
+}
+
+<div class="p-5 mb-4 bg-body-tertiary border rounded-3">
+    <div class="container-fluid py-5">
+        <h1>Подтвердите согласие</h1>
+
+        <p class="lead text-left">Вы действительно хотите чтобы приложение получило доступ к запрашиваемым данным?</p>
+        <p>Это необходимо для работы данного приложения. Разрешите доступ в случае, если вы доверяете приложению</p>
+
+        <form class="form-horizontal" autocomplete="off" method="post">
+            @foreach (var parameter in HttpContext.Request.HasFormContentType ?
+            (IEnumerable<KeyValuePair<string, StringValues>>)HttpContext.Request.Form : HttpContext.Request.Query)
+            {
+                <input type="hidden" name="@parameter.Key" value="@parameter.Value" />
+            }
+
+            <input class="btn btn-lg btn-success" name="submit.Accept" type="submit" value="Да" />
+            <input class="btn btn-lg btn-danger" name="submit.Deny" type="submit" value="Нет" />
+        </form>
+    </div>
+</div>

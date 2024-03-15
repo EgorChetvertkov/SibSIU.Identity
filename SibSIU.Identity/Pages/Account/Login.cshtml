@@ -1,0 +1,59 @@
+﻿@page
+@model SibSIU.Identity.Pages.Account.LoginModel
+@{
+    Layout = "_AuthLayout";
+}
+
+<div class="form-bg">
+    <div class="container">
+        <div class="row">
+            <div class="offset-md-3 col-md-6 offset-sm-1 col-sm-10">
+                <div class="form-container">
+                    <h3 class="title">Вход</h3>
+                    <form class="form-horizontal" autocomplete="off" method="post"
+                    _="on submit
+                        add .disabled to #sign_in_btn
+						then remove .visually-hidden from #loader_indicator
+                        then add .visually-hidden to #submit_btn_text">
+                        <div hidden>
+                            <label hidden asp-for="ReturnURL">Ссылка</label>
+                            <input readonly hidden asp-for="ReturnURL" />
+                        </div>
+                        <div class="form-icon">
+                            <i class="bi bi-person-circle"></i>
+                        </div>
+                        <div class="form-group">
+                            <span class="input-icon"><i class="bi bi-person-fill"></i></span>
+                            <input class="form-control" asp-for="Input.UserName" placeholder="Имя пользователя">
+                        </div>
+                        <div class="form-group">
+                            <span class="input-icon"><i class="bi bi-key-fill"></i></span>
+                            <input class="form-control" asp-for="Input.Password" placeholder="Пароль">
+                            <span class="forgot"><a href="">Забыли пароль?</a></span>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" asp-for="Input.RememberMe">
+                            <label class="form-check-label" asp-for="Input.RememberMe"></label>
+                        </div>
+                        <button id="sign_in_btn" type="submit"
+                            class="btn signin">
+                            <span id="loader_indicator" class="visually-hidden">
+                                <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                                <span role="status">Попытка входа...</span>
+                            </span>
+                            <span id="submit_btn_text">
+                                Войти
+                            </span>
+                        </button>
+                        <div asp-validation-summary="All">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - СибГИУ SSO</title>
+    <link href="~/css/bundle.min.css" rel="stylesheet" />
+    <link href="~/lib/aspnet-client-validation/dist/aspnet-validation.css" rel="stylesheet" />
+    <link href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <link href="~/css/login.css" rel="stylesheet" asp-append-version=true />
+</head>
+<body>
+    <partial name="_Toast" />
+    <section class="px-md-5 py-5">
+        <div class="main-content">
+            <main class="main" id="main">
+                <div class="container p-2">
+                    @RenderBody()
+                </div>
+            </main>
+        </div>
+    </section>
+
+    <script src="~/lib/bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/lib/htmx/htmx.min.js"></script>
+    <script src="~/lib/hyperscript.org/dist/_hyperscript.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

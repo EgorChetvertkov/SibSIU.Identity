@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SibSIU.Core.Database.EF" Version="0.0.2.41" />
+    <PackageReference Include="SibSIU.Core.Services" Version="0.0.2.41" />
+    <PackageReference Include="SibSIU.Core.Services.Extensions" Version="0.0.2.41" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SibSIU.CORS.Database\SibSIU.CORS.Database.csproj" />
+    <ProjectReference Include="..\SibSIU.Identity.Database\SibSIU.Identity.Database.csproj" />
+    <ProjectReference Include="..\SibSIU.Identity.Models\SibSIU.Identity.Models.csproj" />
+  </ItemGroup>
+
+</Project>

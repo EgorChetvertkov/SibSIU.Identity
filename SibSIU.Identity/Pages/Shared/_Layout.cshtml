@@ -1,0 +1,127 @@
+﻿@using SibSIU.Identity.Infrastructure
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - СибГИУ SSO</title>
+    <link href="~/css/bundle.min.css" rel="stylesheet" />
+    <link href="~/lib/aspnet-client-validation/dist/aspnet-validation.css" rel="stylesheet" />
+    <link href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <link href="~/css/login.css" rel="stylesheet" asp-append-version=true />
+    <link href="~/lib/tom-select/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet" />
+</head>
+<body>
+    <partial name="_Toast" />
+    <header class="fixed-top bg-white">
+        <nav class="navbar navbar-theme-primary px-4 col-12">
+            <a asp-page="/Index">
+                <span class="d-flex justify-content-start align-content-center">
+                    <div class="brand-logo"></div>
+                </span>
+            </a>
+            <div class="d-flex align-items-center">
+                <button class="navbar-toggler collapsed d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <nav id="sidebarMenu" class="sidebar d-lg-block collapse mt-6" data-simplebar>
+        <div class="sidebar-inner px-4 pt-3">
+            <ul class="nav flex-column pt-md-0">
+                @if (User.Identity?.IsAuthenticated is true)
+                {
+                    <li class="nav-item @Html.ActiveClass("Home")">
+                        <a asp-page="/Home/Index" class="nav-link">
+                            <span>
+                                <i class="bi bi-house"></i>
+                            </span>
+                            <span class="sidebar-text">Кабинет</span>
+                        </a>
+                    </li>
+                    <li class="nav-item @Html.ActiveClass("Account/Logout")">
+                        <a asp-page="/Account/Logout" class="nav-link">
+                            <span>
+                                <i class="bi bi-door-closed"></i>
+                            </span>
+                            <span class="sidebar-text">Выход</span>
+                        </a>
+                    </li>
+                    <li role="separator" class="dropdown-divider mt-4 mb-3 border-gray-700"></li>
+                }
+                else
+                {
+                    <li class="nav-item @Html.ActiveClass("Account/Login")">
+                        <a asp-page="/Account/Login" class="nav-link">
+                            <span>
+                                <i class="bi bi-door-open"></i>
+                            </span>
+                            <span class="sidebar-text">Вход</span>
+                        </a>
+                    </li>
+                    <li role="separator" class="dropdown-divider mt-4 mb-3 border-gray-700"></li>
+                    <li class="nav-item @Html.ActiveClass("/Account/Registration")">
+                        <a asp-page="/Account/Registration" class="nav-link">
+                            <span>
+                                <i class="bi bi-person-add"></i>
+                            </span>
+                            <span class="sidebar-text">Регистрация</span>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </nav>
+
+    <section class="px-md-4 py-4 content">
+        <div class="main-content">
+            <main class="main" id="main">
+                @RenderBody()
+            </main>
+            <footer class="p-3 footer rounded shadow bg-white m-2 my-3">
+                <div class="row">
+                    <div class="col-12 col-md-4 col-xl-6 mb-4 mb-md-0">
+                        <p class="mb-0 text-center text-lg-start">
+                            СибГИУ &copy; 2022-@DateTime.Now.Year
+                        </p>
+                    </div>
+                    <div class="col-12 col-md-8 col-xl-6 text-center text-lg-start">
+                        <ul class="list-inline list-group-flush list-group-borderless text-md-end mb-0">
+                            <li class="list-inline-item px-0 px-sm-2">
+                                <a asp-area="" asp-page="/Privacy">Политика</a>
+                            </li>
+                            <li class="list-inline-item px-0 px-sm-2">
+                                <a href="https://www.sibsiu.ru/universitet/podrazdeleniya/otdely/?ELEMENT_ID=20358&sphrase_id=581502" target="_blank">
+                                    Контактная информация
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </section>
+
+    <script src="~/lib/bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/lib/htmx/htmx.min.js"></script>
+    <script src="~/lib/hyperscript.org/dist/_hyperscript.min.js"></script>
+    <script src="~/lib/tom-select/dist/js/tom-select.complete.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+
+        @*
+            NOTE!
+            See for toasts: https://dev.to/karenpayneoregon/using-toast-notifications-in-aspnet-core-razor-pages-50kj
+            See bootstrap docs: https://getbootstrap.com/
+            See Lock articles:
+                - https://andrewlock.net/dont-replace-your-view-components-with-razor-components/
+                - https://andrewlock.net/replacing-ajax-calls-in-razor-pages-using-razor-components-and-blazor/
+                - https://dev.to/karenpayneoregon/bootstrap-5-and-razor-pages-4521
+            Using Tom-select for pretty select:
+                - https://tom-select.js.org/docs/plugins/
+        *@

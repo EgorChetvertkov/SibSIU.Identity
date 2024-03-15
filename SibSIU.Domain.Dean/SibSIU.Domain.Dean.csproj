@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CsvHelper" Version="31.0.0" />
+    <PackageReference Include="Iuliia" Version="2.0.4" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="SibSIU.Core.Authenticate" Version="0.0.2.41" />
+    <PackageReference Include="SibSIU.Core.Services.Extensions" Version="0.0.2.41" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SibSIU.Auth.Database\SibSIU.Auth.Database.csproj" />
+    <ProjectReference Include="..\SibSIU.Dean.Database\SibSIU.Dean.Database.csproj" />
+    <ProjectReference Include="..\SibSIU.Identity.Models\SibSIU.Identity.Models.csproj" />
+  </ItemGroup>
+
+</Project>

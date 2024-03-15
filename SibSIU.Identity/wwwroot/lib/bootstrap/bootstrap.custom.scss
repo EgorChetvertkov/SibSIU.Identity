@@ -1,0 +1,17 @@
+$red: #e60f4b;
+$theme-color-interval: 10%;
+$pink: rgba(230, 15, 75, 0.7);
+$orange: #e64123;
+$yellow: rgba(230, 65, 35, 0.7);
+$blue: #0078be;
+$indigo: #00a5e6;
+$secondary: $indigo;
+$purple: #961e82;
+$cyan: rgba(0, 165, 230, 0.7);
+$success: $purple;
+$green: $purple;
+$teal: $purple;
+
+$font-family-sans-serif: Montserrat, sans-serif;
+
+@import "scss/bootstrap.scss";

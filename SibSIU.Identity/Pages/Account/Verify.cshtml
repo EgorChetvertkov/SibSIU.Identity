@@ -1,0 +1,55 @@
+﻿@page
+@using Microsoft.Extensions.Primitives
+@model SibSIU.Identity.Pages.Account.VerifyModel
+@{
+    ViewData["Title"] = "Верификация потока устройства";
+}
+
+
+<div class="p-5 mb-4 bg-body-tertiary rounded-3">
+    <div class="container-fluid py-5">
+        <h1>Вход в систему</h1>
+
+        @if (string.IsNullOrEmpty(Model.Model.UserCode) || !string.IsNullOrEmpty(Model.Model.Error))
+        {
+            @if (!string.IsNullOrEmpty(Model.Model.Error))
+            {
+                <p class="lead text-center alert alert-warning">
+                    Обнаружена ошибка:
+                    <br />
+                    @Model.Model.Error
+                </p>
+            }
+
+            <p class="lead text-left">Укажите код приложения:</p>
+
+            <form method="get">
+                <div class="form-check">
+                    <input class="form-control" name="user_code" type="text" />
+                    <br />
+                    <input class="btn btn-lg btn-success" type="submit" value="Submit" />
+                </div>
+            </form>
+        }
+        else
+        {
+            <p class="lead text-left">Вы действительно хотите передать данные <strong>@Model.Model.ApplicationName</strong>? (Будут переданы все ваши идентификационные данные)</p>
+            <p class="lead text-center alert alert-warning">
+                Убедитесь, что код, отображаемый на устройстве, соответствует данному <strong>@Model.Model.UserCode</strong>.
+                <br />
+                Если коды не совпадают откажитесь от передачи данных.
+            </p>
+
+            <form method="post">
+                @foreach (var parameter in HttpContext.Request.HasFormContentType ?
+               (IEnumerable<KeyValuePair<string, StringValues>>)HttpContext.Request.Form : HttpContext.Request.Query)
+                {
+                    <input type="hidden" name="@parameter.Key" value="@parameter.Value" />
+                }
+
+                <input class="btn btn-lg btn-success" name="submit.Accept" type="submit" value="Да" />
+                <input class="btn btn-lg btn-danger" name="submit.Deny" type="submit" value="Нет" />
+            </form>
+        }
+    </div>
+</div>
