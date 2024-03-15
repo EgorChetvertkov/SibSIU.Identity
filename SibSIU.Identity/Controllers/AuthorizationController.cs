@@ -97,7 +97,7 @@ public class AuthorizationController(
             case ConsentTypes.Implicit:
             case ConsentTypes.External:
             case ConsentTypes.Explicit when !request.HasPrompt(Prompts.Consent):
-                return await Authenticate(user.Data, request, client, cancellationToken);
+                return await Authenticate(user.Data, request, cancellationToken);
 
             default:
                 return GetForbid(Errors.ConsentRequired, "Неизвестный поток");
@@ -120,6 +120,11 @@ public class AuthorizationController(
         }
 
         var result = await HttpContext.AuthenticateAsync(OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+        if (result is null)
+        {
+            return GetForbid(Errors.AccessDenied, "Вы не прошли аутентификацию или просрочили действие аутентификации");
+        }
+
         var userName = result.Principal?.GetClaim(Claims.Subject);
         var user = await userInfo.Handle(new(userName ?? string.Empty), cancellationToken);
         if (user.IsFailure)
@@ -127,12 +132,12 @@ public class AuthorizationController(
             return GetForbid(Errors.ServerError, "Не удалось получить информацию о пользователе");
         }
 
-        var scopes = request.GetScopes();
+        var scopes = result.Principal?.GetScopes() ?? [];
 
         var identity = OpenIdDictHandlers.GetIdentity(user.Data);
         identity.SetScopes(scopes);
         identity.SetResources(await scopeManager.ListResourcesAsync(scopes, cancellationToken).ToListAsync(cancellationToken));
-        identity.SetDestinations(c => OpenIdDictHandlers.GetDestinations(c));
+        identity.SetDestinations(static c => OpenIdDictHandlers.GetDestinations(c));
 
         return SignIn(new ClaimsPrincipal(identity), OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
     }
@@ -194,16 +199,22 @@ public class AuthorizationController(
             claims.Add(item.ClaimType.Name, item.Value);
         }
 
+        foreach (var role in user.Data.Roles)
+        {
+            claims.Add(Claims.Role, role.Name);
+        }
+
         return Ok(claims);
     }
 
-    private async Task<SignInResult> Authenticate(UserDetails user, OpenIddictRequest request, string client, CancellationToken cancellationToken)
+    private async Task<SignInResult> Authenticate(UserDetails user, OpenIddictRequest request, CancellationToken cancellationToken)
     {
         var scopes = request.GetScopes();
 
         var identity = OpenIdDictHandlers.GetAuthCodeIdentity(user);
         identity.SetScopes(scopes);
         identity.SetResources(await scopeManager.ListResourcesAsync(scopes, cancellationToken).ToListAsync(cancellationToken));
+        identity.SetDestinations(static c => OpenIdDictHandlers.GetDestinations(c));
 
         return SignIn(new ClaimsPrincipal(identity), OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
     }

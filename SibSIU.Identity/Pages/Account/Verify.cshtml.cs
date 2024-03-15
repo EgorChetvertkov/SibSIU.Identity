@@ -118,9 +118,7 @@ namespace SibSIU.Identity.Pages.Account
                     var identity = OpenIdDictHandlers.GetIdentity(user.Data);
                     identity.SetScopes(scopes);
                     identity.SetResources(await scopeManager.ListResourcesAsync(scopes, cancellationToken).ToListAsync(cancellationToken));
-
-                    identity.SetScopes(scopes);
-                    identity.SetResources(await scopeManager.ListResourcesAsync(identity.GetScopes()).ToListAsync());
+                    identity.SetDestinations(static c => OpenIdDictHandlers.GetDestinations(c));
 
                     return SignIn(new ClaimsPrincipal(identity), OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
                 }

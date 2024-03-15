@@ -27,12 +27,12 @@ builder.Services.AddAuthentication(options =>
     options.ResponseType = OpenIdConnectResponseType.Code;
 
     options.Scope.Add("openid");
+    options.Scope.Add("roles");
 
     options.CallbackPath = "/signin-oidc";
     options.SignedOutCallbackPath = "/signout-callback-oidc";
     options.SignedOutRedirectUri = "/";
 
-    options.SaveTokens = true;
     options.GetClaimsFromUserInfoEndpoint = true;
     options.UsePkce = true;
 

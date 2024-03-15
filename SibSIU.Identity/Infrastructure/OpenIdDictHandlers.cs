@@ -28,8 +28,6 @@ public class OpenIdDictHandlers
             identity.AddClaim(new(Claims.Email, user.Email));
         }
 
-        identity.SetDestinations(GetDestinations);
-
         return identity;
     }
 
@@ -53,13 +51,8 @@ public class OpenIdDictHandlers
         identity.AddClaims(user.Pupils.Select(p => new Claim("pupils", p.PupilId.ToString())));
         identity.AddClaims(user.Partners.Select(p => new Claim("partners", p.PartnerId.ToString())));
         identity.AddClaims(user.Students.Select(p => new Claim("students", p.StudentId.ToString())));
-
-        foreach (var item in user.Claims)
-        {
-            identity.AddClaim(new Claim(item.ClaimType.Name, item.Value));
-        }
-
-        identity.SetDestinations(GetDestinations);
+        identity.AddClaims(user.Claims.Select(c => new Claim(c.ClaimType.Name, c.Value)));
+        identity.AddClaims(user.Roles.Select(r => new Claim(Claims.Role, r.Name)));
 
         return identity;
     }
@@ -115,7 +108,8 @@ public class OpenIdDictHandlers
             case Claims.Gender:
                 yield return Destinations.AccessToken;
 
-                if (claim.Subject?.HasScope(Scopes.Profile) is true)
+                if (claim.Subject?.HasScope(Scopes.Profile) is true ||
+                    claim.Subject?.HasScope(Scopes.OpenId) is true)
                     yield return Destinations.IdentityToken;
 
                 yield break;
@@ -124,7 +118,8 @@ public class OpenIdDictHandlers
             case Claims.EmailVerified:
                 yield return Destinations.AccessToken;
 
-                if (claim.Subject?.HasScope(Scopes.Email) is true)
+                if (claim.Subject?.HasScope(Scopes.Email) is true||
+                    claim.Subject?.HasScope(Scopes.OpenId) is true)
                     yield return Destinations.IdentityToken;
 
                 yield break;
@@ -132,7 +127,8 @@ public class OpenIdDictHandlers
             case Claims.PhoneNumber:
                 yield return Destinations.AccessToken;
 
-                if (claim.Subject?.HasScope(Scopes.Phone) is true)
+                if (claim.Subject?.HasScope(Scopes.Phone) is true ||
+                    claim.Subject?.HasScope(Scopes.OpenId) is true)
                     yield return Destinations.IdentityToken;
 
                 yield break;
@@ -140,12 +136,14 @@ public class OpenIdDictHandlers
             case Claims.Role:
                 yield return Destinations.AccessToken;
 
-                if (claim.Subject?.HasScope(Scopes.Roles) is true)
+                if (claim.Subject?.HasScope(Scopes.Roles) is true ||
+                    claim.Subject?.HasScope(Scopes.OpenId) is true)
                     yield return Destinations.IdentityToken;
 
                 yield break;
 
             default:
+                yield return Destinations.AccessToken;
                 if (claim.Subject?.HasScope(Scopes.OpenId) is true)
                 {
                     yield return Destinations.IdentityToken;
