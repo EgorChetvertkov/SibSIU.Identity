@@ -18,6 +18,8 @@
 						then remove .visually-hidden from #loader_indicator
                         then add .visually-hidden to #submit_btn_text">
                         <div hidden>
+                            <label hidden asp-for="ReturnURL"></label>
+                            <input hidden readonly asp-for="ReturnURL" />
                         </div>
                         <div class="form-icon">
                             <i class="bi bi-person-circle"></i>
