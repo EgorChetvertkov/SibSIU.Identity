@@ -68,14 +68,7 @@ public sealed class LoginHandler(
 
         if (user.BirthOfDate.HasValue)
         {
-            DateTimeOffset now = DateTimeOffset.UtcNow;
-            int age = now.Year - user.BirthOfDate.Value.Year;
-
-            if (now.Month < user.BirthOfDate.Value.Month ||
-               (now.Month == user.BirthOfDate.Value.Month && now.Day < user.BirthOfDate.Value.Day))
-                age--;
-
-            claims.Add(new(ClaimNames.Age, age.ToString()));
+            claims.Add(new(ClaimNames.BirthDate, user.BirthOfDate.Value.ToString()));
         }
 
         if (user.EmailConfirmed)
@@ -84,7 +77,7 @@ public sealed class LoginHandler(
         }
 
         claims.Add(new(ClaimNames.FirstName, user.FirstName));
-        claims.Add(new(ClaimNames.LastName, user.LastName));
+        claims.Add(new(ClaimNames.FamilyName, user.LastName));
 
         if (user.Gender is not null)
         {

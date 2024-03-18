@@ -14,8 +14,6 @@ using SibSIU.Identity.Infrastructure.Models;
 
 using System.Security.Claims;
 
-using static OpenIddict.Abstractions.OpenIddictConstants;
-
 namespace SibSIU.Identity.Pages.Account
 {
     [Authorize]
@@ -51,7 +49,7 @@ namespace SibSIU.Identity.Pages.Account
             var result = await HttpContext.AuthenticateAsync(OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
             if (result.Succeeded)
             {
-                var clientId = result.Principal.GetClaim(Claims.ClientId);
+                var clientId = result.Principal.GetClaim(ClaimNames.ClientId);
                 if (clientId is null)
                 {
                     Model = new()

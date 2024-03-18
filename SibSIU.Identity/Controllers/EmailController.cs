@@ -15,7 +15,7 @@ public class EmailController(IEmailSender sender) : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(Message), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Error), StatusCodes.Status500InternalServerError)]
-    [Authorize(Roles = "admin")] //TODO: check valid role name
+    [Authorize(Roles = RoleNames.BaseAdministrator)]
     public async Task<IActionResult> TrySendUnsent(CancellationToken cancellationToken)
     {
         await sender.TrySendAllUnsentMails(cancellationToken);

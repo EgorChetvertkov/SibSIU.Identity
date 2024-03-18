@@ -125,7 +125,7 @@ public class AuthorizationController(
             return GetForbid(Errors.AccessDenied, "Вы не прошли аутентификацию или просрочили действие аутентификации");
         }
 
-        var userName = result.Principal?.GetClaim(Claims.Subject);
+        var userName = result.Principal?.GetClaim(ClaimNames.Subject);
         var user = await userInfo.Handle(new(userName ?? string.Empty), cancellationToken);
         if (user.IsFailure)
         {
@@ -147,7 +147,7 @@ public class AuthorizationController(
     public async Task<IActionResult> UserInfo(CancellationToken cancellationToken)
     {
 
-        var userName = User.GetClaim(Claims.Subject);
+        var userName = User.GetClaim(ClaimNames.Subject);
         var user = await userInfo.Handle(new(userName ?? string.Empty), cancellationToken);
         if (user.IsFailure)
         {
@@ -163,35 +163,35 @@ public class AuthorizationController(
 
         var claims = new Dictionary<string, object>(StringComparer.Ordinal)
         {
-            [Claims.Subject] = user.Data.UserName,
-            [Claims.Email] = user.Data.Email,
-            [Claims.EmailVerified] = user.Data.EmailConfirmed,
-            [Claims.Name] = user.Data.FirstName,
-            [Claims.MiddleName] = user.Data.LastName,
-            [Claims.FamilyName] = user.Data.Patronymic,
-            [Claims.Birthdate] = user.Data.BirthOfDate,
-            [Claims.Gender] = user.Data.Gender.Name,
-            [Claims.PhoneNumber] = user.Data.PhoneNumber
+            [ClaimNames.Subject] = user.Data.UserName,
+            [ClaimNames.EmailAddress] = user.Data.Email,
+            [ClaimNames.EmailVerified] = user.Data.EmailConfirmed,
+            [ClaimNames.FirstName] = user.Data.FirstName,
+            [ClaimNames.FamilyName] = user.Data.LastName,
+            [ClaimNames.FamilyName] = user.Data.Patronymic,
+            [ClaimNames.BirthDate] = user.Data.BirthOfDate,
+            [ClaimNames.Gender] = user.Data.Gender.Name,
+            [ClaimNames.PhoneNumber] = user.Data.PhoneNumber
         };
 
         foreach (var work in user.Data.Works)
         {
-            claims.Add("workers", work.WorkPlaceId);
+            claims.Add(ClaimNames.Worker, work.WorkPlaceId);
         }
 
         foreach (var work in user.Data.Pupils)
         {
-            claims.Add("pupils", work.PupilId);
+            claims.Add(ClaimNames.Pupil, work.PupilId);
         }
 
         foreach (var work in user.Data.Partners)
         {
-            claims.Add("partners", work.PartnerId);
+            claims.Add(ClaimNames.Partner, work.PartnerId);
         }
 
         foreach (var work in user.Data.Students)
         {
-            claims.Add("students", work.StudentId);
+            claims.Add(ClaimNames.Student, work.StudentId);
         }
 
         foreach (var item in user.Data.Claims)
@@ -201,7 +201,7 @@ public class AuthorizationController(
 
         foreach (var role in user.Data.Roles)
         {
-            claims.Add(Claims.Role, role.Name);
+            claims.Add(ClaimNames.Role, role.Name);
         }
 
         return Ok(claims);

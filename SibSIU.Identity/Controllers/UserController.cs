@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
+using SibSIU.Core.Names;
 using SibSIU.Core.Services.Pagination;
 using SibSIU.Core.Services.ResultObject;
 using SibSIU.Core.Services.ResultObject.Extensions;
@@ -37,7 +39,7 @@ using System.Net.Mime;
 namespace SibSIU.Identity.Controllers;
 [Route("api/[controller]")]
 [ApiController]
-[Authorize(Roles = "admin")] //TODO: check valid role name
+[Authorize(Roles = RoleNames.BaseAdministrator)]
 public class UserController(
     IGetUserPageHandler getPage,
     IGetUserDetailsHandler getDetails,

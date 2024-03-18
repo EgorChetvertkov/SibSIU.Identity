@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 
 using OpenIddict.Abstractions;
 
+using SibSIU.Core.Names;
 using SibSIU.Identity.Models.User.Manage;
 
 using System.Security.Claims;
@@ -18,14 +19,14 @@ public class OpenIdDictHandlers
     {
         var identity = new ClaimsIdentity(
             authenticationType: TokenValidationParameters.DefaultAuthenticationType,
-            nameType: Claims.Subject,
-            roleType: Claims.Role);
+            nameType: ClaimNames.Subject,
+            roleType: ClaimNames.Role);
 
-        identity.AddClaim(new(Claims.Subject, user.UserName));
+        identity.AddClaim(new(ClaimNames.Subject, user.UserName));
 
         if (user.EmailConfirmed)
         {
-            identity.AddClaim(new(Claims.Email, user.Email));
+            identity.AddClaim(new(ClaimNames.EmailAddress, user.Email));
         }
 
         return identity;
@@ -35,24 +36,24 @@ public class OpenIdDictHandlers
     {
         var identity = new ClaimsIdentity(
             authenticationType: TokenValidationParameters.DefaultAuthenticationType,
-            nameType: Claims.Subject,
-            roleType: Claims.Role);
+            nameType: ClaimNames.Subject,
+            roleType: ClaimNames.Role);
 
-        identity.AddClaim(Claims.Subject, user.UserName);
-        identity.AddClaim(Claims.Email, user.Email);
-        identity.AddClaim(Claims.EmailVerified, user.EmailConfirmed.ToString());
-        identity.AddClaim(Claims.Name, user.FirstName);
-        identity.AddClaim(Claims.MiddleName, user.LastName);
-        identity.AddClaim(Claims.FamilyName, user.Patronymic);
-        identity.AddClaim(Claims.Birthdate, user.BirthOfDate.ToString());
-        identity.AddClaim(Claims.Gender, user.Gender.Name);
-        identity.AddClaim(Claims.PhoneNumber, user.PhoneNumber);
-        identity.AddClaims(user.Works.Select(w => new Claim("workers", w.WorkPlaceId.ToString())));
-        identity.AddClaims(user.Pupils.Select(p => new Claim("pupils", p.PupilId.ToString())));
-        identity.AddClaims(user.Partners.Select(p => new Claim("partners", p.PartnerId.ToString())));
-        identity.AddClaims(user.Students.Select(p => new Claim("students", p.StudentId.ToString())));
+        identity.AddClaim(ClaimNames.Subject, user.UserName);
+        identity.AddClaim(ClaimNames.EmailAddress, user.Email);
+        identity.AddClaim(ClaimNames.EmailVerified, user.EmailConfirmed.ToString());
+        identity.AddClaim(ClaimNames.FirstName, user.FirstName);
+        identity.AddClaim(ClaimNames.FamilyName, user.LastName);
+        identity.AddClaim(ClaimNames.Patronymic, user.Patronymic);
+        identity.AddClaim(ClaimNames.BirthDate, user.BirthOfDate.ToString());
+        identity.AddClaim(ClaimNames.Gender, user.Gender.Name);
+        identity.AddClaim(ClaimNames.PhoneNumber, user.PhoneNumber);
+        identity.AddClaims(user.Works.Select(w => new Claim(ClaimNames.Worker, w.WorkPlaceId.ToString())));
+        identity.AddClaims(user.Pupils.Select(p => new Claim(ClaimNames.Pupil, p.PupilId.ToString())));
+        identity.AddClaims(user.Partners.Select(p => new Claim(ClaimNames.Partner, p.PartnerId.ToString())));
+        identity.AddClaims(user.Students.Select(p => new Claim(ClaimNames.Student, p.StudentId.ToString())));
         identity.AddClaims(user.Claims.Select(c => new Claim(c.ClaimType.Name, c.Value)));
-        identity.AddClaims(user.Roles.Select(r => new Claim(Claims.Role, r.Name)));
+        identity.AddClaims(user.Roles.Select(r => new Claim(ClaimNames.Role, r.Name)));
 
         return identity;
     }
@@ -101,11 +102,11 @@ public class OpenIdDictHandlers
     {
         switch (claim.Type)
         {
-            case Claims.Name:
-            case Claims.FamilyName:
-            case Claims.MiddleName:
-            case Claims.Birthdate:
-            case Claims.Gender:
+            case ClaimNames.FirstName:
+            case ClaimNames.FamilyName:
+            case ClaimNames.Patronymic:
+            case ClaimNames.BirthDate:
+            case ClaimNames.Gender:
                 yield return Destinations.AccessToken;
 
                 if (claim.Subject?.HasScope(Scopes.Profile) is true ||
@@ -114,8 +115,8 @@ public class OpenIdDictHandlers
 
                 yield break;
 
-            case Claims.Email:
-            case Claims.EmailVerified:
+            case ClaimNames.EmailAddress:
+            case ClaimNames.EmailVerified:
                 yield return Destinations.AccessToken;
 
                 if (claim.Subject?.HasScope(Scopes.Email) is true||
@@ -124,7 +125,7 @@ public class OpenIdDictHandlers
 
                 yield break;
 
-            case Claims.PhoneNumber:
+            case ClaimNames.PhoneNumber:
                 yield return Destinations.AccessToken;
 
                 if (claim.Subject?.HasScope(Scopes.Phone) is true ||
@@ -133,7 +134,7 @@ public class OpenIdDictHandlers
 
                 yield break;
 
-            case Claims.Role:
+            case ClaimNames.Role:
                 yield return Destinations.AccessToken;
 
                 if (claim.Subject?.HasScope(Scopes.Roles) is true ||

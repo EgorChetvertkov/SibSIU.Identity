@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SibSIU.Core.Database.EF" Version="0.0.2.41" />
+    <PackageReference Include="SibSIU.Core.Database.EF" Version="0.0.2.50" />
   </ItemGroup>
 
 </Project>
