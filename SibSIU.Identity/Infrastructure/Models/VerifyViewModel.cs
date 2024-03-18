@@ -5,19 +5,18 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SibSIU.Identity.Infrastructure.Models;
 
-//TODO : set names by resources
 public class VerifyViewModel
 {
-    [Display(Name = "Приложение")]
+    [Display(ResourceType = typeof(Resources.Resource), Name = "ApplicationName")]
     public string ApplicationName { get; set; } = null!;
 
-    [BindNever, Display(Name = "Ошибка")]
+    [BindNever, Display(ResourceType = typeof(Resources.Resource), Name = "ErrorName")]
     public string Error { get; set; } = null!;
 
-    [Display(Name = "Область")]
+    [Display(ResourceType = typeof(Resources.Resource), Name = "Scope")]
     public string Scope { get; set; } = null!;
 
     [FromQuery(Name = OpenIddictConstants.Parameters.UserCode)]
-    [Display(Name = "Код пользователя")]
+    [Display(ResourceType = typeof(Resources.Resource), Name = "UserCode")]
     public string UserCode { get; set; } = null!;
 }

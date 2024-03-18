@@ -48,13 +48,9 @@ namespace SibSIU.Identity.Pages.Account
 
                 TempData.Set<ToastMessage>(TempDataExtensions.BaseKey, toast);
 
-                DateTime now = DateTime.UtcNow;
                 AuthenticationProperties properties = new()
                 {
                     IsPersistent = Input.RememberMe,
-                    AllowRefresh = true,
-                    IssuedUtc = now,
-                    ExpiresUtc = now.AddDays(30),
                 };
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, result.Data.Principal, properties);
 
