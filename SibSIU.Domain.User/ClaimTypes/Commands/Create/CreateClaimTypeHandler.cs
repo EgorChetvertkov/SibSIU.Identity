@@ -39,6 +39,8 @@ public sealed class CreateClaimTypeHandler(
             UpdateAt = now,
             IsActive = true,
             Name = request.Name,
+            IncludeInAccessToken = request.IncludeInAccessToken,
+            IncludeInIdentityToken = request.IncludeInIdentityToken,
         };
 
         await auth.ClaimTypes.AddAsync(claimType, cancellationToken);

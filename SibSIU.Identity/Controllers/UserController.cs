@@ -332,7 +332,7 @@ public class UserController(
     [ProducesResponseType(typeof(Message), StatusCodes.Status200OK)]
     public async Task<IActionResult> AddClaim(Ulid userId, AddClaimData data, CancellationToken cancellationToken)
     {
-        var result = await addClaim.Handle(new(userId, data.ClaimTypeId, data.ScopeId, data.Value), cancellationToken);
+        var result = await addClaim.Handle(new(userId, data.ClaimTypeId, data.Value), cancellationToken);
         return result.MapToActionResult();
     }
 

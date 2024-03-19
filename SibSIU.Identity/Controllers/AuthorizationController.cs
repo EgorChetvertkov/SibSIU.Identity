@@ -146,7 +146,7 @@ public class AuthorizationController(
     [HttpGet("~/connect/userinfo"), HttpPost("~/connect/userinfo")]
     public async Task<IActionResult> UserInfo(CancellationToken cancellationToken)
     {
-
+        // TODO : Create handler for get claim list by userName
         var userName = User.GetClaim(ClaimNames.Subject);
         var user = await userInfo.Handle(new(userName ?? string.Empty), cancellationToken);
         if (user.IsFailure)

@@ -33,7 +33,7 @@ public class ClaimTypeController(
     [ProducesResponseType(typeof(Message), StatusCodes.Status200OK)]
     public async Task<IActionResult> Create(ClaimTypeDetails claimType, CancellationToken cancellationToken)
     {
-        var result = await create.Handle(new(claimType.Id, claimType.Name), cancellationToken);
+        var result = await create.Handle(new(claimType.Id, claimType.Name, claimType.IncludeInAccessToken, claimType.IncludeInIdentityToken), cancellationToken);
         return result.MapToActionResult();
     }
 
@@ -48,7 +48,7 @@ public class ClaimTypeController(
     [ProducesResponseType(typeof(Message), StatusCodes.Status200OK)]
     public async Task<IActionResult> Update(ClaimTypeDetails claimType, CancellationToken cancellationToken)
     {
-        var result = await update.Handle(new(claimType.Id, claimType.Name), cancellationToken);
+        var result = await update.Handle(new(claimType.Id, claimType.Name, claimType.IncludeInAccessToken, claimType.IncludeInIdentityToken), cancellationToken);
         return result.MapToActionResult();
     }
 

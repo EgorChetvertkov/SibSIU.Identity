@@ -41,6 +41,8 @@ public sealed class UpdateClaimTypeHandler(
         }
 
         claimType.Name = request.Name;
+        claimType.IncludeInAccessToken = request.IncludeInAccessToken;
+        claimType.IncludeInIdentityToken = request.IncludeInIdentityToken;
         claimType.UpdateAt = DateTimeOffset.UtcNow;
 
         await auth.SaveChangesAsync(cancellationToken);

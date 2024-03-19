@@ -7,4 +7,8 @@ public sealed class ClaimTypeDetails
     public Ulid Id { get; set; }
     [Required]
     public string Name { get; set; } = null!;
+    [Required]
+    public bool IncludeInAccessToken { get; set; }
+    [Required]
+    public bool IncludeInIdentityToken { get; set; }
 }

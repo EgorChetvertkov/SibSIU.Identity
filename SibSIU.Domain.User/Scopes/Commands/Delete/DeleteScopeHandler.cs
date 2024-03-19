@@ -22,7 +22,7 @@ public sealed class DeleteScopeHandler(
     {
         int countClaims = await auth.Scopes
             .Where(s => s.Id == request.Id)
-            .Select(s => s.Claims.Count)
+            .Select(s => s.ClaimTypes.Count)
             .SingleOrDefaultAsync(cancellationToken);
         if (countClaims > 0)
         {

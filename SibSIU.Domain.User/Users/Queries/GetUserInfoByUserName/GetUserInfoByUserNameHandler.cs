@@ -7,6 +7,7 @@ using SibSIU.Core.Services.Extensions;
 using SibSIU.Core.Services.ResultObject;
 using SibSIU.Domain.UserManager.Errors;
 using SibSIU.Identity.Models.Genders;
+using SibSIU.Identity.Models.Scopes;
 using SibSIU.Identity.Models.User.Manage;
 using SibSIU.UserData.Database.Entities;
 
@@ -42,8 +43,8 @@ public sealed class GetUserInfoByUserNameHandler(
                 .ThenInclude(p => p!.School)
             .Include(u => u.Claims)
                 .ThenInclude(c => c.ClaimType)
-            .Include(u => u.Claims)
-                .ThenInclude(c => c.Scope)
+                    .ThenInclude(ct => ct.Settings)
+                        .ThenInclude(s => s.Scope)
             .Include(u => u.UserRoles)
                 .ThenInclude(u => u.Role)
             .SingleOrDefaultAsync(cancellationToken);
@@ -84,7 +85,7 @@ public sealed class GetUserInfoByUserNameHandler(
 
         List<ClaimDetails> claims = u.Claims.Select(c => new ClaimDetails(
             c.Id,
-            new(c.Scope.Id, c.Scope.Name),
+            c.ClaimType.Settings.Select(s => new ScopeItem(s.Scope.Id, s.Scope.Name)).ToList(),
             new(c.ClaimType.Id, c.ClaimType.Name),
             c.Value)).ToList();
 

@@ -98,6 +98,7 @@ public class OpenIdDictHandlers
         return true;
     }
 
+    //TODO : Create method get claim with destinations by data in database
     public static IEnumerable<string> GetDestinations(Claim claim)
     {
         switch (claim.Type)

@@ -36,13 +36,6 @@ public sealed class AddClaimHandler(
             return CreateResult.Failure<Message>(ClaimTypeErrors.ClaimTypeNotFound);
         }
 
-        Scope? scope = await auth.Scopes.GetById(request.ScopeId, cancellationToken);
-        if (scope is null)
-        {
-            auth.Rollback();
-            return CreateResult.Failure<Message>(ScopeErrors.ScopeNotFound);
-        }
-
         DateTimeOffset now = DateTimeOffset.UtcNow;
         AuthClaim claim = new()
         {
@@ -50,7 +43,6 @@ public sealed class AddClaimHandler(
             CreateAt = now,
             UpdateAt = now,
             IsActive = true,
-            Scope = scope,
             ClaimType = claimType,
             User = user,
             Value = request.Value,

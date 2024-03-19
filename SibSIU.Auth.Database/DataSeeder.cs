@@ -20,7 +20,21 @@ internal static class DataSeeder
             UpdateAt = now,
         };
 
-        builder.Entity<Role>().HasData(admin);
+        Role baseUser = new()
+        {
+            Id = Ulid.NewUlid(now),
+            Name = RoleNames.BaseUser,
+            IsActive = true,
+            CreateAt = now,
+            UpdateAt = now,
+        };
+
+        builder.Entity<Role>().HasData(admin, baseUser);
+
+        //TODO : set default claim types
+        //TODO : set default destinations
+        //TODO : set default scopes
+        //TODO : set default claim settings
 
         Gender male = new()
         {

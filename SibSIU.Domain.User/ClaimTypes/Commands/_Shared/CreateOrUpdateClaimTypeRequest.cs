@@ -9,14 +9,18 @@ public sealed class CreateOrUpdateClaimTypeRequest :
 {
     public Ulid Id { get; set; }
     public string Name { get; set; }
+    public bool IncludeInAccessToken { get; set; }
+    public bool IncludeInIdentityToken { get; set; }
 
-    public CreateOrUpdateClaimTypeRequest(Ulid id, string name)
+    public CreateOrUpdateClaimTypeRequest(Ulid id, string name, bool includeInAccessToken, bool includeInIdentityToken)
     {
         Id = id;
         Name = name;
+        IncludeInAccessToken = includeInAccessToken;
+        IncludeInIdentityToken = includeInIdentityToken;
     }
 
-    public CreateOrUpdateClaimTypeRequest() : this(Ulid.Empty, string.Empty) { }
+    public CreateOrUpdateClaimTypeRequest() : this(Ulid.Empty, string.Empty, false, false) { }
 
     public Error Validate()
     {

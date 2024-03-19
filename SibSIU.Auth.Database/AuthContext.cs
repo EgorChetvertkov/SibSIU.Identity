@@ -13,6 +13,7 @@ public sealed class AuthContext(DbContextOptions<AuthContext> options)
     public DbSet<AcademicLevel> AcademicLevels { get; set; } = default!;
     public DbSet<AuthClaim> Claims { get; set; } = default!;
     public DbSet<AuthClaimType> ClaimTypes { get; set; } = default!;
+    public DbSet<AuthClaimTypeScopes> ClaimTypeSettings { get; set; } = default!;
     public DbSet<DepartmentUnit> DepartmentUnits { get; set; } = default!;
     public DbSet<DirectionOfTraining> DirectionOfTraining { get; set; } = default!;
     public DbSet<Gender> Genders { get; set; } = default!;
