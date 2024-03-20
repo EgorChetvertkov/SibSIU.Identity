@@ -54,6 +54,8 @@ namespace SibSIU.Auth.Database.Migrations
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
                     Name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    IncludeInAccessToken = table.Column<bool>(type: "boolean", nullable: false),
+                    IncludeInIdentityToken = table.Column<bool>(type: "boolean", nullable: false),
                     xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false),
                     CreateAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     UpdateAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
@@ -240,6 +242,35 @@ namespace SibSIU.Auth.Database.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ClaimTypeSettings",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    ClaimTypeId = table.Column<string>(type: "text", nullable: false),
+                    ScopeId = table.Column<string>(type: "text", nullable: false),
+                    xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false),
+                    CreateAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    UpdateAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClaimTypeSettings", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ClaimTypeSettings_ClaimTypes_ClaimTypeId",
+                        column: x => x.ClaimTypeId,
+                        principalTable: "ClaimTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ClaimTypeSettings_Scopes_ScopeId",
+                        column: x => x.ScopeId,
+                        principalTable: "Scopes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "DepartmentUnits",
                 columns: table => new
                 {
@@ -280,7 +311,6 @@ namespace SibSIU.Auth.Database.Migrations
                     Id = table.Column<string>(type: "text", nullable: false),
                     Value = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     UserId = table.Column<string>(type: "text", nullable: false),
-                    ScopeId = table.Column<string>(type: "text", nullable: false),
                     ClaimTypeId = table.Column<string>(type: "text", nullable: false),
                     xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false),
                     CreateAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
@@ -294,12 +324,6 @@ namespace SibSIU.Auth.Database.Migrations
                         name: "FK_Claims_ClaimTypes_ClaimTypeId",
                         column: x => x.ClaimTypeId,
                         principalTable: "ClaimTypes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Claims_Scopes_ScopeId",
-                        column: x => x.ScopeId,
-                        principalTable: "Scopes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -547,38 +571,145 @@ namespace SibSIU.Auth.Database.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "ClaimTypes",
+                columns: new[] { "Id", "CreateAt", "IncludeInAccessToken", "IncludeInIdentityToken", "IsActive", "Name", "UpdateAt" },
+                values: new object[,]
+                {
+                    { "01HSD738SG0AYHR2QJDJKM7E2C", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), false, true, true, "birthdate", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SG0G4821WN1VZGW3ZN", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, true, true, "token_usage", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SG16SD5JFG53X82SAX", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), false, true, true, "zoneinfo", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SG1BM7RYESSB3KG1JE", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), false, true, true, "profile", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SG1D8A2267BBGA35NF", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), false, true, true, "middle_name", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SG1JBG8974Q69F1A2Y", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, true, true, "rfp", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SG2ZEKSJ2ZMX40C3B0", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), false, true, true, "role", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SG3ZKTQB2MDXVM7FN7", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, true, true, "c_hash", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SG4MKQZ3S7QVW2YAW9", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, true, true, "nbf", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SG4RPZJ231694WB85D", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, true, true, "acr", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SG60S2B2ZV54QF1TYD", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), false, true, true, "street_address", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SG7QSRQQG4ZV26YWPA", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), false, true, true, "phone_number_verified", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SG7RY2YQADTS6GH20M", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), false, true, true, "postal_code", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SG8TY0KMCEG5VEGJEQ", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, true, true, "auth_time", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SG9AXMAFBHBSW7H482", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), false, true, true, "preferred_username", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SG9XQTQWX81N58BESF", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), false, true, true, "family_name", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGAPNNBY86P9B6TJJB", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), false, true, true, "active", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGAQAYMK05VCQB8F09", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, true, true, "kid", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGASQ781MVC1MMB85Z", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, true, true, "sub", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGAXWFXZAPM9X9AV19", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), false, true, true, "country", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGB372K9CACNFWN003", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), false, true, true, "given_name", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGCB61SN13FKV80FHA", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), false, true, true, "updated_at", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGCWAK8P8080G2AWMD", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, true, true, "jti", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGDAR2HVJN4VRZCXXN", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, true, true, "at_hash", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGEVM9YBM493HCQ981", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), false, true, true, "locale", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGFQQXBMQX33F98PQ9", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), false, true, true, "website", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGGKPS68GXW1J56WVC", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, true, true, "aud", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGHQWS4BHV6PN3DRGY", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), false, true, true, "name", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGJ8PP0G2WGNPE420X", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), false, true, true, "gender", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGKHA138RP7FDFPX6H", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, true, true, "token_type", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGKVZRDWAKH27RYMTR", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, true, true, "client_id", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGKZTG470TCSY7MFPK", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), false, true, true, "region", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGM4RN34B6T0V5ZHC8", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), false, true, true, "nickname", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGMCK1HQ694X027PNH", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, true, true, "as", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGMH6PQBEDQBQTHJF7", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, true, true, "iss", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGN4381YD6TMM7DSSZ", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), false, true, true, "target_link_uri", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGNWM10FJK2MA0BHT7", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), false, true, true, "locality", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGP5EQ75GF11W5Z3R1", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, true, true, "iat", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGQ37F2FYAE2D7AXZJ", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), false, true, true, "formatted", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGRC3F051BTBPJXZC3", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, true, true, "amr", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGRTQA0V5Q3MJG87BD", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), false, true, true, "picture", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGSPQ2J37S9VPSS5F5", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, true, true, "nonce", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGT8A6RW3AJEY2YQZK", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, true, true, "exp", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGTY5PE7DQKVWEE4SR", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, true, true, "scope", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGWZ03W6743Q291NJ5", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), false, true, true, "phone_number", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGY11JTJ33VBRA809E", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, true, true, "azp", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGY4Z54XPV9SZBT1C7", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), false, true, true, "username", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGYHWFBDBDF9RMZ1KA", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), false, true, true, "email_verified", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGZKQ38YH6ZK83B0QB", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), false, true, true, "address", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGZYB8QEJJJBHZX89B", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), false, true, true, "email", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) }
+                });
+
+            migrationBuilder.InsertData(
                 table: "Genders",
                 columns: new[] { "Id", "CreateAt", "IsActive", "Name", "UpdateAt" },
                 values: new object[,]
                 {
-                    { "01HPNNGYC7GVB4SJNWHS2BPMZE", new DateTimeOffset(new DateTime(2024, 2, 15, 5, 58, 38, 727, DateTimeKind.Unspecified).AddTicks(5687), new TimeSpan(0, 0, 0, 0, 0)), true, "Женский", new DateTimeOffset(new DateTime(2024, 2, 15, 5, 58, 38, 727, DateTimeKind.Unspecified).AddTicks(5687), new TimeSpan(0, 0, 0, 0, 0)) },
-                    { "01HPNNGYC7WBA31XCDG6BJK960", new DateTimeOffset(new DateTime(2024, 2, 15, 5, 58, 38, 727, DateTimeKind.Unspecified).AddTicks(5687), new TimeSpan(0, 0, 0, 0, 0)), true, "Мужской", new DateTimeOffset(new DateTime(2024, 2, 15, 5, 58, 38, 727, DateTimeKind.Unspecified).AddTicks(5687), new TimeSpan(0, 0, 0, 0, 0)) }
+                    { "01HSD738SG8GGCBAAWDGH2RFKF", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, "Мужской", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGC17HZE70XCW8WA6R", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, "Женский", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) }
                 });
 
             migrationBuilder.InsertData(
                 table: "Organizations",
                 columns: new[] { "Id", "CreateAt", "FullName", "IsActive", "KPP", "OGRN", "ShortName", "TIN", "UpdateAt" },
-                values: new object[] { "01HPNNGYC7JF6D3CEKEJ23EFW8", new DateTimeOffset(new DateTime(2024, 2, 15, 5, 58, 38, 727, DateTimeKind.Unspecified).AddTicks(5687), new TimeSpan(0, 0, 0, 0, 0)), "Федеральное государственное бюджетное образовательное учреждение высшего образования «Сибирский государственный индустриальный университет»", true, "421701001", "1024201470908", "СибГИУ", "4216003509", new DateTimeOffset(new DateTime(2024, 2, 15, 5, 58, 38, 727, DateTimeKind.Unspecified).AddTicks(5687), new TimeSpan(0, 0, 0, 0, 0)) });
+                values: new object[] { "01HSD738SGCNRC89WGXT8S59SF", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), "Федеральное государственное бюджетное образовательное учреждение высшего образования «Сибирский государственный индустриальный университет»", true, "421701001", "1024201470908", "СибГИУ", "4216003509", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) });
 
             migrationBuilder.InsertData(
                 table: "Roles",
                 columns: new[] { "Id", "CreateAt", "IsActive", "Name", "UpdateAt" },
-                values: new object[] { "01HPNNGYC7NBATNH78YT22916B", new DateTimeOffset(new DateTime(2024, 2, 15, 5, 58, 38, 727, DateTimeKind.Unspecified).AddTicks(5687), new TimeSpan(0, 0, 0, 0, 0)), true, "Администратор", new DateTimeOffset(new DateTime(2024, 2, 15, 5, 58, 38, 727, DateTimeKind.Unspecified).AddTicks(5687), new TimeSpan(0, 0, 0, 0, 0)) });
+                values: new object[,]
+                {
+                    { "01HSD738SGVETBE7RK30RRZ8XA", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, "Пользователь", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGW1ZJETSDH3AMKJG1", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, "Администратор", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Scopes",
+                columns: new[] { "Id", "CreateAt", "IsActive", "Name", "UpdateAt" },
+                values: new object[,]
+                {
+                    { "01HSD738SG02WSRPD20D4C9EKJ", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, "address", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SG2R81Q0MK3GZ7S95J", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, "openid", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SG6M73ZK4XBF1ZD1F8", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, "roles", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGAM54BA5K5NQ9QW3Q", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, "email", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGTZ88MZ7DMH538BE8", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, "offline_access", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGV3BMBGNW16Q0G8KJ", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, "profile", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGVGK7HZEK09RD1DWN", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, "phone", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) }
+                });
 
             migrationBuilder.InsertData(
                 table: "Units",
                 columns: new[] { "Id", "CreateAt", "DeanCode", "FullName", "IsActive", "ParentId", "ShortName", "UpdateAt" },
-                values: new object[] { "01HPNNGYC7ZQEASNRB2B3ZPK30", new DateTimeOffset(new DateTime(2024, 2, 15, 5, 58, 38, 727, DateTimeKind.Unspecified).AddTicks(5687), new TimeSpan(0, 0, 0, 0, 0)), null, "Федеральное государственное бюджетное образовательное учреждение высшего образования «Сибирский государственный индустриальный университет»", true, null, "СибГИУ", new DateTimeOffset(new DateTime(2024, 2, 15, 5, 58, 38, 727, DateTimeKind.Unspecified).AddTicks(5687), new TimeSpan(0, 0, 0, 0, 0)) });
+                values: new object[] { "01HSD738SG4T26TQHC3QTNP77M", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), null, "Федеральное государственное бюджетное образовательное учреждение высшего образования «Сибирский государственный индустриальный университет»", true, null, "СибГИУ", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) });
+
+            migrationBuilder.InsertData(
+                table: "ClaimTypeSettings",
+                columns: new[] { "Id", "ClaimTypeId", "CreateAt", "IsActive", "ScopeId", "UpdateAt" },
+                values: new object[,]
+                {
+                    { "01HSD738SG1EERF5RFG1732WB2", "01HSD738SGKZTG470TCSY7MFPK", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, "01HSD738SG02WSRPD20D4C9EKJ", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SG1JVH9J5MQ8GXBS74", "01HSD738SG9XQTQWX81N58BESF", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, "01HSD738SGV3BMBGNW16Q0G8KJ", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SG5PVFT3NXR72XNA9R", "01HSD738SG7RY2YQADTS6GH20M", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, "01HSD738SG02WSRPD20D4C9EKJ", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SG7TF7XGBVRBEWAAQ3", "01HSD738SG9AXMAFBHBSW7H482", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, "01HSD738SGV3BMBGNW16Q0G8KJ", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SG8QPP5VN8N0P3J5AN", "01HSD738SGNWM10FJK2MA0BHT7", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, "01HSD738SG02WSRPD20D4C9EKJ", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SG8XKJAVA1YP1FYPJX", "01HSD738SG1D8A2267BBGA35NF", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, "01HSD738SGV3BMBGNW16Q0G8KJ", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGAZJB080FDBE7HKR3", "01HSD738SGHQWS4BHV6PN3DRGY", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, "01HSD738SGV3BMBGNW16Q0G8KJ", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGB82CX1NW7SY7N96Y", "01HSD738SGM4RN34B6T0V5ZHC8", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, "01HSD738SGV3BMBGNW16Q0G8KJ", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGEPN3VTJJMVKMYFQM", "01HSD738SGB372K9CACNFWN003", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, "01HSD738SGV3BMBGNW16Q0G8KJ", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGHPRFDJQH2Z8XBH9C", "01HSD738SG60S2B2ZV54QF1TYD", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, "01HSD738SG02WSRPD20D4C9EKJ", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGKDTMEZMFXB3SG0CF", "01HSD738SG0AYHR2QJDJKM7E2C", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, "01HSD738SGV3BMBGNW16Q0G8KJ", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGMYCC48HNRKXD08JE", "01HSD738SG7QSRQQG4ZV26YWPA", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, "01HSD738SGVGK7HZEK09RD1DWN", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGNRXXG4T7050MCE2A", "01HSD738SGWZ03W6743Q291NJ5", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, "01HSD738SGVGK7HZEK09RD1DWN", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGQM290RD3Z13WR92A", "01HSD738SGASQ781MVC1MMB85Z", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, "01HSD738SG2R81Q0MK3GZ7S95J", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGR6SYH3BMBZA63MTF", "01HSD738SGRTQA0V5Q3MJG87BD", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, "01HSD738SGV3BMBGNW16Q0G8KJ", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGR9N4FKVNV20C91G6", "01HSD738SGZYB8QEJJJBHZX89B", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, "01HSD738SGAM54BA5K5NQ9QW3Q", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGSABQ6JBZN7QGCG3P", "01HSD738SGAXWFXZAPM9X9AV19", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, "01HSD738SG02WSRPD20D4C9EKJ", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGSBS035P933M5CV8D", "01HSD738SGZKQ38YH6ZK83B0QB", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, "01HSD738SG02WSRPD20D4C9EKJ", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGSJ53M4GY9C4CX8QH", "01HSD738SGCB61SN13FKV80FHA", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, "01HSD738SGV3BMBGNW16Q0G8KJ", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGTKG93MMCW7G96CNY", "01HSD738SGFQQXBMQX33F98PQ9", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, "01HSD738SGV3BMBGNW16Q0G8KJ", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGVHMDYSY8FWRPTQHK", "01HSD738SGJ8PP0G2WGNPE420X", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, "01HSD738SGV3BMBGNW16Q0G8KJ", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGWC8S6GFRJHR9Z5ZD", "01HSD738SG1BM7RYESSB3KG1JE", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, "01HSD738SGV3BMBGNW16Q0G8KJ", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGX72Q3CW75MM9HCFA", "01HSD738SG16SD5JFG53X82SAX", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, "01HSD738SGV3BMBGNW16Q0G8KJ", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGY4JSYS832XT5ZBN6", "01HSD738SGYHWFBDBDF9RMZ1KA", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, "01HSD738SGAM54BA5K5NQ9QW3Q", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { "01HSD738SGYGJ5Q0W94NKZ0BD0", "01HSD738SGEVM9YBM493HCQ981", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), true, "01HSD738SGV3BMBGNW16Q0G8KJ", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)) }
+                });
 
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "BirthOfDate", "CreateAt", "Email", "EmailConfirmed", "FirstName", "GenderId", "IsActive", "IsConfirmedUser", "IsTemporaryPassword", "LastName", "Password", "PasswordSalt", "Patronymic", "PhoneNumber", "UpdateAt", "UserName" },
-                values: new object[] { "01HPNNGYTNQA05898N3B5NG6HH", new DateTimeOffset(new DateTime(2001, 1, 18, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new DateTimeOffset(new DateTime(2024, 2, 15, 5, 58, 38, 727, DateTimeKind.Unspecified).AddTicks(5687), new TimeSpan(0, 0, 0, 0, 0)), "admin@sibsiu.ru", true, "Admin", "01HPNNGYC7WBA31XCDG6BJK960", true, true, false, "Admin", "I6iE0+cNBC2Z1f0UI8xARXpCWaCaEsEqHMR0HABH1qjSnTI8n6HPuGYoaHOlkPfEty0++y5bk39zo7ZAbHrHRA==", "tXxuQ5GlTbUg2vqCN54TTGUdhSGdzuNnGTOIqhma51KhNYknO/wkq2LCw0q5BB68/RK0CRT3L0RUtoCDILtEBA==", "Admin", "+7-(900)-00-00-0000", new DateTimeOffset(new DateTime(2024, 2, 15, 5, 58, 38, 727, DateTimeKind.Unspecified).AddTicks(5687), new TimeSpan(0, 0, 0, 0, 0)), "Admin" });
+                values: new object[] { "01HSD7391ARHMG2JEQD0MGNFY8", new DateTimeOffset(new DateTime(2001, 1, 18, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), "admin@sibsiu.ru", true, "Admin", "01HSD738SG8GGCBAAWDGH2RFKF", true, true, false, "Admin", "bP8yMCscAfJFHtkMiAQHxDdz1WoNESV9iX+WWtjN03cZPTVrqXhTC2nHHLjc27uZ/hcsett3VzYa2uOZgtRgIw==", "Y/uwds2b2dji7OTpMaGjG0trtxD2APzVV94K68owey5lSbesPusaLE/zqsP7bKEHXFTHcFGPxgt3zJmGtRYwrQ==", "Admin", "+7-(900)-00-00-0000", new DateTimeOffset(new DateTime(2024, 3, 20, 5, 59, 40, 592, DateTimeKind.Unspecified).AddTicks(909), new TimeSpan(0, 0, 0, 0, 0)), "Admin" });
 
             migrationBuilder.InsertData(
                 table: "UserRoles",
                 columns: new[] { "RoleId", "UserId", "Version" },
-                values: new object[] { "01HPNNGYC7NBATNH78YT22916B", "01HPNNGYTNQA05898N3B5NG6HH", 0L });
+                values: new object[] { "01HSD738SGW1ZJETSDH3AMKJG1", "01HSD7391ARHMG2JEQD0MGNFY8", 0L });
 
             migrationBuilder.CreateIndex(
                 name: "FormDeanCodeIndex",
@@ -624,14 +755,19 @@ namespace SibSIU.Auth.Database.Migrations
                 column: "ClaimTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Claims_ScopeId",
-                table: "Claims",
-                column: "ScopeId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Claims_UserId",
                 table: "Claims",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClaimTypeSettings_ClaimTypeId",
+                table: "ClaimTypeSettings",
+                column: "ClaimTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClaimTypeSettings_ScopeId",
+                table: "ClaimTypeSettings",
+                column: "ScopeId");
 
             migrationBuilder.CreateIndex(
                 name: "DotDeanCodeIndex",
@@ -763,6 +899,9 @@ namespace SibSIU.Auth.Database.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Claims");
+
+            migrationBuilder.DropTable(
+                name: "ClaimTypeSettings");
 
             migrationBuilder.DropTable(
                 name: "Partners");

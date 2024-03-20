@@ -13,6 +13,7 @@ using static OpenIddict.Abstractions.OpenIddictConstants;
 
 namespace SibSIU.Identity.Infrastructure;
 
+//TODO : Create method get claim with destinations by data in database and transfer class in domain layer and split it by endpoints authorization controller
 public class OpenIdDictHandlers
 {
     public static ClaimsIdentity GetAuthCodeIdentity(UserDetails user)
@@ -98,7 +99,6 @@ public class OpenIdDictHandlers
         return true;
     }
 
-    //TODO : Create method get claim with destinations by data in database
     public static IEnumerable<string> GetDestinations(Claim claim)
     {
         switch (claim.Type)
