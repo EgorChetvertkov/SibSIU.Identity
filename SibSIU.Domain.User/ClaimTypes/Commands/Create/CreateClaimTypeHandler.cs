@@ -43,7 +43,25 @@ public sealed class CreateClaimTypeHandler(
             IncludeInIdentityToken = request.IncludeInIdentityToken,
         };
 
+        List<Scope> scopes = await auth.Scopes
+            .Where(s => request.Scopes.Contains(s.Id))
+            .ToListAsync(cancellationToken);
+        List<AuthClaimTypeScopes> authClaimTypeScopes = [];
+        foreach (var scope in scopes)
+        {
+            authClaimTypeScopes.Add(new()
+            {
+                Id = Ulid.NewUlid(now),
+                CreateAt = now,
+                UpdateAt = now,
+                IsActive = true,
+                ClaimTypeId = claimType.Id,
+                ScopeId = scope.Id
+            });
+        }
+
         await auth.ClaimTypes.AddAsync(claimType, cancellationToken);
+        await auth.ClaimTypeSettings.AddRangeAsync(authClaimTypeScopes, cancellationToken);
         await auth.SaveChangesAsync(cancellationToken);
 
         return CreateResult.Success(new Message("Тип утверждения успешно добавлен"));

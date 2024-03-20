@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using SibSIU.Identity.Models.Scopes;
+
+using System.ComponentModel.DataAnnotations;
 
 namespace SibSIU.Identity.Models.ClaimTypes;
 public sealed class ClaimTypeDetails
@@ -11,4 +13,6 @@ public sealed class ClaimTypeDetails
     public bool IncludeInAccessToken { get; set; }
     [Required]
     public bool IncludeInIdentityToken { get; set; }
+    [Required]
+    public List<ScopeItem> Scopes { get; set; } = [];
 }

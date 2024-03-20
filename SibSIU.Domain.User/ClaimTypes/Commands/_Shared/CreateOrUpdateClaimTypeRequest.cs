@@ -7,20 +7,27 @@ public sealed class CreateOrUpdateClaimTypeRequest :
     IRequest<Result<Message>>,
     IValidated
 {
-    public Ulid Id { get; set; }
-    public string Name { get; set; }
-    public bool IncludeInAccessToken { get; set; }
-    public bool IncludeInIdentityToken { get; set; }
+    public Ulid Id { get; init; }
+    public string Name { get; init; }
+    public bool IncludeInAccessToken { get; init; }
+    public bool IncludeInIdentityToken { get; init; }
+    public List<Ulid> Scopes { get; init; }
 
-    public CreateOrUpdateClaimTypeRequest(Ulid id, string name, bool includeInAccessToken, bool includeInIdentityToken)
+    public CreateOrUpdateClaimTypeRequest(
+        Ulid id,
+        string name,
+        bool includeInAccessToken,
+        bool includeInIdentityToken,
+        List<Ulid> scopes)
     {
         Id = id;
         Name = name;
         IncludeInAccessToken = includeInAccessToken;
         IncludeInIdentityToken = includeInIdentityToken;
+        Scopes = scopes;
     }
 
-    public CreateOrUpdateClaimTypeRequest() : this(Ulid.Empty, string.Empty, false, false) { }
+    public CreateOrUpdateClaimTypeRequest() : this(Ulid.Empty, string.Empty, false, false, []) { }
 
     public Error Validate()
     {
